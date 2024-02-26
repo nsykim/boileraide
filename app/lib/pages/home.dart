@@ -55,7 +55,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 251, 218, 117),
+        backgroundColor: Color.fromARGB(255, 251, 242, 117),
         body: Center(
           child: Column(
             mainAxisAlignment:
@@ -63,16 +63,19 @@ class HomePage extends StatelessWidget {
             crossAxisAlignment:
                 CrossAxisAlignment.center, // Center the children horizontally
             children: [
-              const Text(
+              Text(
                 'Welcome to BoilerAide!',
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
               ),
-              const Text(
+              Text(
                 'Realize Your Culinary Imagination',
-                style: TextStyle(fontSize: 13, fontStyle: FontStyle.italic),
+                style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic),
               ),
               const Text(
                 'A Purdue ECE49595-NL Project',
@@ -85,7 +88,7 @@ class HomePage extends StatelessWidget {
               ),
               ElevatedButton(
                 style: ButtonStyle(
-                  shape: MaterialStateProperty.all<OutlinedBorder> (
+                  shape: MaterialStateProperty.all<OutlinedBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -100,12 +103,8 @@ class HomePage extends StatelessWidget {
                     ),
                   );
                 },
-                child: const Text(
-                  'Get Started',
-                  style: TextStyle( 
-                    color: Colors.black
-                  )
-                ),
+                child: const Text('Get Started',
+                    style: TextStyle(color: Colors.black)),
               ),
             ],
           ),
