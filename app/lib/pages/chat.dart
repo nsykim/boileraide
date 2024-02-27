@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:google_fonts/google_fonts.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
@@ -9,24 +8,26 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+          backgroundColor: const Color(0xff202020),
           appBar: AppBar(
-            backgroundColor: const Color.fromARGB(255, 251, 218, 117),
-            title: 
-            const Column(
-              children: [
-              Text('ECE49595-NL: BoilerAide',
-                  style: TextStyle(
-                    fontSize: 20,
-                  )),
+            centerTitle: true,
+            backgroundColor: const Color(0xff202020),
+              title: Row (
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                Image.asset(
+              'assets/logo_trans.png',
+              height: 30,
+            ),
               Text(
-                'Realize Your Culinary Imagination',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontStyle: FontStyle.italic,
+                '  boileraide',
+                style: GoogleFonts.poppins(
+                  color: const Color(0xffD0ad50),
+                  fontWeight: FontWeight.bold,
                 ),
-              ),
-              // title: const Text('Realize Your Culinary Imagination')
-            ]),
+              )
+            ],)
+            
           ),
           body: Container(
             // margin: const EdgeInsets.all(50),
