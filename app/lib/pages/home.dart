@@ -55,7 +55,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Color.fromARGB(255, 251, 242, 117),
+        backgroundColor: const Color(0xff202020),
         body: Center(
           child: Column(
             mainAxisAlignment:
@@ -63,23 +63,29 @@ class HomePage extends StatelessWidget {
             crossAxisAlignment:
                 CrossAxisAlignment.center, // Center the children horizontally
             children: [
-              Text(
-                'Welcome to BoilerAide!',
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+              Image.asset(
+                'assets/boileraide_logo_lower.png'
               ),
+              // Text(
+              //   'Welcome to BoilerAide!',
+              //   style: GoogleFonts.poppins(
+              //     color: const Color(0xffDBC078),
+              //     fontWeight: FontWeight.bold,
+              //     fontSize: 20,
+              //   ),
+              // ),
               Text(
                 'Realize Your Culinary Imagination',
                 style: GoogleFonts.poppins(
                     fontSize: 13,
+                    color: const Color(0xffD0ad50),
                     fontWeight: FontWeight.bold,
                     fontStyle: FontStyle.italic),
               ),
               const Text(
                 'A Purdue ECE49595-NL Project',
                 style: TextStyle(
+                  color: Color.fromARGB(255, 255, 255, 255),
                   fontSize: 10,
                 ),
               ),
@@ -88,6 +94,7 @@ class HomePage extends StatelessWidget {
               ),
               ElevatedButton(
                 style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(const Color(0xffD0ad50)),
                   shape: MaterialStateProperty.all<OutlinedBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
