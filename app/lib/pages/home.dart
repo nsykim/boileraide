@@ -1,4 +1,4 @@
-import 'package:app/pages/chat.dart';
+import 'package:app/pages/chats_page.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -66,14 +66,6 @@ class HomePage extends StatelessWidget {
               Image.asset(
                 'assets/boileraide_logo_lower.png'
               ),
-              // Text(
-              //   'Welcome to BoilerAide!',
-              //   style: GoogleFonts.poppins(
-              //     color: const Color(0xffDBC078),
-              //     fontWeight: FontWeight.bold,
-              //     fontSize: 20,
-              //   ),
-              // ),
               Text(
                 'Realize Your Culinary Imagination',
                 style: GoogleFonts.poppins(
