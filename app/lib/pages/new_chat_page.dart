@@ -3,14 +3,14 @@ import 'package:app/functionality/chat_repo.dart';
 import 'package:app/pages/chat_layout.dart';
 import 'package:app/functionality/messages.dart';
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key}) : super(key: key);
+class NewChatPage extends StatefulWidget {
+  const NewChatPage({Key? key}) : super(key: key);
 
   @override
-  _ChatPageState createState() => _ChatPageState();
+  _NewChatPageState createState() => _NewChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _NewChatPageState extends State<NewChatPage> {
   //text editing controller is how text is managed by flutter... define as late->
   //so avoid potential issues related to widget lifecycle
   late final TextEditingController _messageController;
