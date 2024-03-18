@@ -24,7 +24,17 @@ class _NewChatPageState extends State<NewChatPage> {
     _messageController = TextEditingController();
     //superclass is stateful widget. makes sure that the initalization of super class is executed
     _chatRepo = ChatRepo();
-    _generateNewID();
+    _initalizeChatRepo();
+  }
+
+  Future<void> _initalizeChatRepo() async {
+    try {
+      await _chatRepo.initializeDatabase();
+      _generateNewID();
+      setState(() {});
+    } catch (e) {
+      print('Initialization error $e');
+    }
   }
 
   Future<void> _generateNewID() async {
@@ -88,14 +98,13 @@ class _NewChatPageState extends State<NewChatPage> {
         ),
       ),
       Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row (
-          children: [
+          padding: const EdgeInsets.all(8.0),
+          child: Row(children: [
             Expanded(
               child: TextField(
                 controller: _messageController,
                 decoration: const InputDecoration(
-                  hintText:  'What sounds good to eat?',
+                  hintText: 'What sounds good to eat?',
                 ),
               ),
             ),
@@ -103,10 +112,7 @@ class _NewChatPageState extends State<NewChatPage> {
               onPressed: _sendMessage,
               icon: const Icon(Icons.send),
             )
-          ]
-        )
-      ),
-
+          ])),
     ]));
   }
 }

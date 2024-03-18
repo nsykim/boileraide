@@ -1,6 +1,7 @@
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart'; //used store chat data
-import 'dart:async';
+// import 'dart:async';
+import 'package:path_provider/path_provider.dart';
 import 'messages.dart';
 
 class ChatRepo {
@@ -8,15 +9,27 @@ class ChatRepo {
   late final Database db;
   //list of chatIDs so we know if this is a new chat and need to open a new store
   final Set<int> chatIDs = {};
+  bool _initalized = false;
+  ChatRepo._(); //private constructor
+  static final ChatRepo _instance = ChatRepo._();
 
-  ChatRepo() {
-    //constructor... will create a new database called chat_database
-    initializeDatabase();
-  }
+  factory ChatRepo() => _instance; //just makes sure there is only ever one
+
 
   Future<void> initializeDatabase() async {
     //opens or creates if it doesn't already exist
-    db = await databaseFactoryIo.openDatabase('chat_database.db');
+    //gets dynamic path to app storage... won't be deleted when app is deleted
+    final appDocumentDir = await getApplicationDocumentsDirectory();
+    final dbPath = '${appDocumentDir.path}/chat_database.db';
+    db = await databaseFactoryIo.openDatabase(dbPath);
+    _initalized = true;
+  }
+
+  Future<void> initalizeIfNeeded() async {
+    if (!_initalized) {
+      await initializeDatabase();
+      _initalized = true;
+    }
   }
 
   Future<bool> createNewStore(Message message) async {
@@ -56,6 +69,9 @@ class ChatRepo {
 
   Future<int> getMaxID() async {
     //go to this store
+    if (db == null) {
+      throw Exception("Database has not been initalized yet");
+    }
     final store = intMapStoreFactory.store('chat_store');
     final finder = Finder(sortOrders: [SortOrder('chatID', false)]);
     final snapshot = await store.findFirst(db, finder: finder);
