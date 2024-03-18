@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:app/functionality/chat_repo.dart';
 import 'package:app/pages/chat_layout.dart';
 import 'package:app/functionality/messages.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class NewChatPage extends StatefulWidget {
   const NewChatPage({Key? key}) : super(key: key);
@@ -17,12 +18,15 @@ class _NewChatPageState extends State<NewChatPage> {
   //define but not initialize... this will be filled in in the initiate state (when the page is first loaded)
   late final ChatRepo _chatRepo;
   int _chatID = 0; //initalize to 0 in case this is the first chatID
+  bool emptyChat = true;
+  late final ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
     _messageController = TextEditingController();
     //superclass is stateful widget. makes sure that the initalization of super class is executed
+    _scrollController = ScrollController();
     _chatRepo = ChatRepo();
     _initalizeChatRepo();
   }
@@ -64,8 +68,50 @@ class _NewChatPageState extends State<NewChatPage> {
       await _chatRepo.storeMessage(sent);
       //clear the chatbar
       _messageController.clear();
-      setState(() {});
+      setState(() {
+        emptyChat = false;
+        if (_scrollController.hasClients) {
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        }
+      });
       //ui update
+    }
+  }
+
+  Future<void> _confirmReload() async {
+    bool confirm = false;
+    if (!emptyChat) {
+      confirm = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Confirmation'),
+          content:
+              const Text('Are you sure you want to reload the chat window?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text('Reload'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      confirm = true;
+    }
+    if (confirm) {
+      setState(() {
+        emptyChat = true;
+        _chatID = 0;
+      });
+      _generateNewID();
     }
   }
 
@@ -84,14 +130,52 @@ class _NewChatPageState extends State<NewChatPage> {
             } else {
               final messages = snapshot.data ?? [];
               return ListView.builder(
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  final message = messages[index];
-                  return ListTile(
-                    title: Text(message.content),
-                    subtitle: Text(message.timestamp.toString()),
-                  );
-                },
+                  shrinkWrap: true,
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final message = messages[index];
+                    return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 2.0, horizontal: 4.0),
+                        child: Column(
+                          crossAxisAlignment: message.isUser
+                              ? CrossAxisAlignment.start
+                              : CrossAxisAlignment.end,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: message.isUser
+                                    ? Colors.blue
+                                    : Colors.grey[300],
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              padding: const EdgeInsets.all(12.0),
+                              child: Text(
+                                message.content,
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  color: message.isUser
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontFamily: 'YourFontFamily',
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0, right: 8.0, top: 2.0),
+                              child: Text(
+                                message.timestamp.toString(),
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12.0,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ));
+                  }
               );
             }
           },
@@ -104,13 +188,18 @@ class _NewChatPageState extends State<NewChatPage> {
               child: TextField(
                 controller: _messageController,
                 decoration: const InputDecoration(
-                  hintText: 'What sounds good to eat?',
-                ),
+                    hintText: 'What sounds good...?',
+                    hintStyle: TextStyle(
+                      color: Color.fromARGB(255, 207, 207, 207),
+                    )),
               ),
             ),
             IconButton(
               onPressed: _sendMessage,
-              icon: const Icon(Icons.send),
+              icon: const Icon(
+                Icons.send,
+                color: Color.fromARGB(255, 207, 207, 207),
+              ),
             )
           ])),
     ]));
