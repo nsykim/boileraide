@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ChatPage extends StatelessWidget {
-  const ChatPage({super.key});
+class ChatsPageLayout extends StatelessWidget {
+  final Widget body;
+
+  const ChatsPageLayout({Key? key, required this.body}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +36,17 @@ class ChatPage extends StatelessWidget {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.chat_bubble),
-              label: 'Chat',
+              label: 'New Chat',
               // backgroundColor:Color(0xffD0ad50),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bookmark),
-              label: 'Saved',
+              label: 'Saved Recipes',
+            ),            
+            BottomNavigationBarItem(
+              icon: Icon(Icons.timer),
+              label: 'Previous Chats',
+              // backgroundColor:Color(0xffD0ad50),
             ),
           ],
           selectedItemColor: const Color(0xffD0ad50),
