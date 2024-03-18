@@ -136,7 +136,7 @@ class _NewChatPageState extends State<NewChatPage> {
                     final message = messages[index];
                     return Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 2.0, horizontal: 4.0),
+                        vertical: 2.0, horizontal: 4.0),
                         child: Column(
                           crossAxisAlignment: message.isUser
                               ? CrossAxisAlignment.start
@@ -147,29 +147,29 @@ class _NewChatPageState extends State<NewChatPage> {
                                 color: message.isUser
                                     ? Colors.blue
                                     : Colors.grey[300],
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(3.0),
                               ),
-                              padding: const EdgeInsets.all(12.0),
+                              padding: const EdgeInsets.only(right: 12.0, top: 12.0, bottom: 12.0, left: 8.0),
                               child: Text(
                                 message.content,
                                 style: TextStyle(
-                                  fontSize: 16.0,
+                                  fontSize: 13.0,
                                   color: message.isUser
                                       ? Colors.white
                                       : Colors.black,
-                                  fontFamily: 'YourFontFamily',
+                                  fontFamily: 'puffins',
                                   fontWeight: FontWeight.normal,
                                 ),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                  left: 8.0, right: 8.0, top: 2.0),
+                                  right: 8.0, top: 2.0),
                               child: Text(
                                 message.timestamp.toString(),
                                 style: const TextStyle(
                                   color: Colors.grey,
-                                  fontSize: 12.0,
+                                  fontSize: 9.0,
                                 ),
                               ),
                             ),
