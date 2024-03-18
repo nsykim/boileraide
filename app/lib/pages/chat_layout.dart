@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:app/pages/new_chat_page.dart';
 
 class ChatsPageLayout extends StatelessWidget {
   final Widget body;
@@ -9,6 +10,7 @@ class ChatsPageLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      key: key, //get rid of the annoying warning
       home: Scaffold(
         backgroundColor: const Color(0xff202020),
         appBar: AppBar(
@@ -30,9 +32,25 @@ class ChatsPageLayout extends StatelessWidget {
                 )
               ],
             )),
-        body: Container(),
+        body: body,
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: const Color(0xff202020),
+          onTap: (index) {
+            if (index == 0) {
+              Navigator.push(
+                context, MaterialPageRoute(builder: (context) => const NewChatPage()),
+              );
+            }
+            // } else if (index == 1) {
+            //   Navigator.push(
+            //     context, MaterialPageRoute(builder: (context) => RecipesPage()).
+            //   );
+            // } else if (index == 2) {
+            //    Navigator.push(
+            //     context, MaterialPageRoute(builder: (context) => ChatPage()).
+            //   );
+            // }
+          },
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.chat_bubble),
@@ -42,7 +60,7 @@ class ChatsPageLayout extends StatelessWidget {
             BottomNavigationBarItem(
               icon: Icon(Icons.bookmark),
               label: 'Saved Recipes',
-            ),            
+            ),
             BottomNavigationBarItem(
               icon: Icon(Icons.timer),
               label: 'Previous Chats',
