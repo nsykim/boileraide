@@ -28,7 +28,9 @@ class MessagingWidget extends StatelessWidget {
           final messages = snapshot.data ?? [];
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             if (scrollController.hasClients) {
-              scrollController.jumpTo(scrollController.position.maxScrollExtent + 135);
+              Future.delayed(const Duration(milliseconds: 100), () {
+                 scrollController.jumpTo(scrollController.position.maxScrollExtent);
+              });
             }
           });
           return ListView.builder(
@@ -38,17 +40,22 @@ class MessagingWidget extends StatelessWidget {
             itemBuilder: (context, index) {
               final message = messages[index];
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
                 child: Column(
-                  crossAxisAlignment: message.isUser ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+                  crossAxisAlignment: message.isUser
+                      ? CrossAxisAlignment.start
+                      : CrossAxisAlignment.end,
                   children: [
                     Container(
-                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.66),
+                      constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.66),
                       decoration: BoxDecoration(
                         color: message.isUser ? Colors.blue : Colors.grey[300],
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      padding: const EdgeInsets.only(right: 12.0, top: 12.0, bottom: 12.0, left: 8.0),
+                      padding: const EdgeInsets.only(
+                          right: 12.0, top: 12.0, bottom: 12.0, left: 8.0),
                       child: Text(
                         message.content,
                         style: TextStyle(
@@ -61,7 +68,8 @@ class MessagingWidget extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 2.0, top: 2.0),
                       child: Text(
-                        DateFormat('yyyy-MM-dd hh:mm a').format(message.timestamp),
+                        DateFormat('yyyy-MM-dd hh:mm a')
+                            .format(message.timestamp),
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 9.0,
