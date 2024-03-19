@@ -69,7 +69,7 @@ class ChatRepo {
 
   Future<int> getMaxID() async {
     //go to this store
-    if (db == null) {
+    if (db == false) {
       throw Exception("Database has not been initalized yet");
     }
     final store = intMapStoreFactory.store('chat_store');
