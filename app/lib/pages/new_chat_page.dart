@@ -143,11 +143,14 @@ class _NewChatPageState extends State<NewChatPage> {
                               : CrossAxisAlignment.end,
                           children: [
                             Container(
+                              constraints: BoxConstraints(
+                                maxWidth: MediaQuery.of(context).size.width*0.66,
+                              ),
                               decoration: BoxDecoration(
                                 color: message.isUser
                                     ? Colors.blue
                                     : Colors.grey[300],
-                                borderRadius: BorderRadius.circular(3.0),
+                                borderRadius: BorderRadius.circular(20.0),
                               ),
                               padding: const EdgeInsets.only(right: 12.0, top: 12.0, bottom: 12.0, left: 8.0),
                               child: Text(
@@ -158,7 +161,7 @@ class _NewChatPageState extends State<NewChatPage> {
                                       ? Colors.white
                                       : Colors.black,
                                   fontFamily: 'puffins',
-                                  fontWeight: FontWeight.normal,
+                                  // fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
