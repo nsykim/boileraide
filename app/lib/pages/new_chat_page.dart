@@ -3,6 +3,7 @@ import 'package:app/functionality/chat_repo.dart';
 import 'package:app/pages/chat_layout.dart';
 import 'package:app/functionality/messages.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class NewChatPage extends StatefulWidget {
   const NewChatPage({Key? key}) : super(key: key);
@@ -32,6 +33,7 @@ class _NewChatPageState extends State<NewChatPage> {
   }
 
   Future<void> _initalizeChatRepo() async {
+    //future keyword used for async functions
     try {
       await _chatRepo.initializeDatabase();
       _generateNewID();
@@ -70,51 +72,19 @@ class _NewChatPageState extends State<NewChatPage> {
       _messageController.clear();
       setState(() {
         emptyChat = false;
+      });
+
+      await Future.delayed(const Duration(milliseconds: 200), () {
         if (_scrollController.hasClients) {
-          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+          _scrollController.jumpTo(
+            _scrollController.position.maxScrollExtent+150,
+        );
         }
       });
       //ui update
     }
   }
-
-  Future<void> _confirmReload() async {
-    bool confirm = false;
-    if (!emptyChat) {
-      confirm = await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Confirmation'),
-          content:
-              const Text('Are you sure you want to reload the chat window?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              child: const Text('Reload'),
-            ),
-          ],
-        ),
-      );
-    } else {
-      confirm = true;
-    }
-    if (confirm) {
-      setState(() {
-        emptyChat = true;
-        _chatID = 0;
-      });
-      _generateNewID();
-    }
-  }
-
+  @override
   Widget build(BuildContext context) {
     return ChatsPageLayout(
         body: Column(children: [
@@ -129,14 +99,19 @@ class _NewChatPageState extends State<NewChatPage> {
               return Text('Error: ${snapshot.error}');
             } else {
               final messages = snapshot.data ?? [];
+              // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              //   _scrollController
+              //       .jumpTo(_scrollController.position.maxScrollExtent);
+              // });
               return ListView.builder(
                   shrinkWrap: true,
+                  controller: _scrollController,
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     final message = messages[index];
                     return Padding(
                         padding: const EdgeInsets.symmetric(
-                        vertical: 2.0, horizontal: 4.0),
+                            vertical: 2.0, horizontal: 4.0),
                         child: Column(
                           crossAxisAlignment: message.isUser
                               ? CrossAxisAlignment.start
@@ -144,7 +119,8 @@ class _NewChatPageState extends State<NewChatPage> {
                           children: [
                             Container(
                               constraints: BoxConstraints(
-                                maxWidth: MediaQuery.of(context).size.width*0.66,
+                                maxWidth:
+                                    MediaQuery.of(context).size.width * 0.66,
                               ),
                               decoration: BoxDecoration(
                                 color: message.isUser
@@ -152,7 +128,11 @@ class _NewChatPageState extends State<NewChatPage> {
                                     : Colors.grey[300],
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
-                              padding: const EdgeInsets.only(right: 12.0, top: 12.0, bottom: 12.0, left: 8.0),
+                              padding: const EdgeInsets.only(
+                                  right: 12.0,
+                                  top: 12.0,
+                                  bottom: 12.0,
+                                  left: 8.0),
                               child: Text(
                                 message.content,
                                 style: TextStyle(
@@ -166,10 +146,12 @@ class _NewChatPageState extends State<NewChatPage> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 8.0, top: 2.0),
+                              padding:
+                                  const EdgeInsets.only(right: 8.0, top: 2.0),
                               child: Text(
-                                message.timestamp.toString(),
+                                DateFormat('yyyy-MM-dd hh:mm a').format(
+                                message.timestamp
+                                ),
                                 style: const TextStyle(
                                   color: Colors.grey,
                                   fontSize: 9.0,
@@ -178,8 +160,7 @@ class _NewChatPageState extends State<NewChatPage> {
                             ),
                           ],
                         ));
-                  }
-              );
+                  });
             }
           },
         ),
@@ -189,13 +170,16 @@ class _NewChatPageState extends State<NewChatPage> {
           child: Row(children: [
             Expanded(
               child: TextField(
-                controller: _messageController,
-                decoration: const InputDecoration(
-                    hintText: 'What sounds good...?',
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 207, 207, 207),
-                    )),
-              ),
+                  controller: _messageController,
+                  style: const TextStyle(
+                      color: Color.fromARGB(255, 207, 207, 207)),
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    hintText:
+                        emptyChat ? 'What sounds good?' : 'Tell me more...',
+                    hintStyle: const TextStyle(
+                        color: Color.fromARGB(255, 207, 207, 207)),
+                  )),
             ),
             IconButton(
               onPressed: _sendMessage,
