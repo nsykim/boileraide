@@ -49,18 +49,14 @@ class ChatRepo {
     return newID;
   }
 
-  Future<bool> createNewStore(Message message) async {
-    if (!chatIDs.contains(message.chatID)) {
-      chatIDs.add(message.chatID);
-      StoreRef<int, Map<String, dynamic>> store =
-          intMapStoreFactory.store('chat_$message.chatID');
-      await store.add(
-          db,
-          message
-              .toJson()); //store Json of message in store which is in database db
-      return true; //new store is created, first message stored
+  Future<void> initStore(int chatID) async {
+    final storeFinder = Finder(filter: Filter.byKey(chatID));
+    final store = intMapStoreFactory.store('chat_$chatID');
+    final record = await store.findFirst(db, finder: storeFinder);
+    if (record != null) {
+      throw Exception('Chat ID is already in use!');
     } else {
-      return false; //store already existed, need to store message
+      await store.add(db, {}); 
     }
   }
 
