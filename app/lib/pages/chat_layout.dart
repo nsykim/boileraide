@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:app/pages/new_chat_page.dart';
 
 class ChatsPageLayout extends StatefulWidget {
   final Widget body;
@@ -32,23 +31,34 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
             )
           ),
           actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text('No',
-                style: GoogleFonts.poppins(
-                  color: Colors.cyan,
-                )
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget> [
+              Flexible(
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text('No',
+                    style: GoogleFonts.poppins(
+                      color: Colors.cyan,
+                    )
+                  ),
+                ),
               ),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text('Yes',
-                style: GoogleFonts.poppins(
-                  color: Colors.red,
-                )
-              ),
-            ),
-          ]),
+              const SizedBox(width: 20),
+              Flexible(
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text('Yes',
+                    style: GoogleFonts.poppins(
+                      color: Colors.red,
+                    )
+                  ),
+                ),
+              )
+            ]
+          )
+        ]    
+      )
     );
     return confirmed ?? false;
   }
