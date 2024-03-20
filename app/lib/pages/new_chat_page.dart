@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/functionality/chat_repo.dart';
-import 'package:app/pages/chat_layout.dart';
+import 'package:app/pages/background_formatting.dart';
 import 'package:app/functionality/messaging.dart';
 import 'package:logger/logger.dart';
 
