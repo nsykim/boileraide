@@ -29,17 +29,17 @@ class ChatRepo {
     }
   }
 
-  Future<int> _getCurrentID() async {
+  Future<int> getCurrentID() async {
     final prefs = await SharedPreferences.getInstance();
-    final int? ID = prefs.getInt('ID');
-    if (ID == null) {
+    final int? id = prefs.getInt('ID');
+    if (id == null) {
       throw Exception('no ID found!');
     } else {
-      return ID;
+      return id;
     }
   }
 
-  Future<int> _updateChatID() async {
+  Future<int> updateChatID() async {
     //update shared preferences to save this after app is closed
     final prefs = await SharedPreferences.getInstance();
 
@@ -56,7 +56,7 @@ class ChatRepo {
     if (record != null) {
       throw Exception('Chat ID is already in use!');
     } else {
-      await store.add(db, {}); 
+      await store.add(db, {});
     }
   }
 

@@ -140,6 +140,7 @@ class _MessagingWidgetState extends State<MessagingWidget> {
                   String content = _messageController.text.trim();
                   if (content.isNotEmpty) {
                     try {
+                      print('ChatID: ${widget.chatID}');
                       print('Message content: ${_messageController.text}');
                       Message sent = Message(
                         chatID: widget.chatID,

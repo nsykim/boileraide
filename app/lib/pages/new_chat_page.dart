@@ -14,7 +14,7 @@ class NewChatPage extends StatefulWidget {
 class _NewChatPageState extends State<NewChatPage> {
   late final ChatRepo _chatRepo;
   late final ScrollController _scrollController;
-  int _chatID = 0;
+  int _chatID = -1;
   final Logger logger = Logger();
 
   @override
@@ -23,30 +23,26 @@ class _NewChatPageState extends State<NewChatPage> {
     super.initState();
     _chatRepo = ChatRepo();
     _initializeChatRepo();
-    logger.d('NewChatPage initialized. Chat ID: $_chatID'); 
+    logger.d('NewChatPage initialized. Chat ID: $_chatID');
   }
 
   Future<void> _initializeChatRepo() async {
     try {
-       logger.d('Initializing ChatRepo');
-      await _chatRepo.initializeDatabase();
+      logger.d('Initalizing ChatRepo');
       _generateNewID();
+      await _chatRepo.initializeDatabase();
+      logger.d('New ID: $_chatID');
       setState(() {});
-      logger.d('ChatRepo initialized successfully');
+      logger.d('Initialized ChatRepo Successfully');
     } catch (e) {
-      logger.e('Error initializing ChatRepo: $e');
+      logger.e('Error initializing the Chat Repository with ID $_chatID: $e');
     }
   }
 
   Future<void> _generateNewID() async {
-    if (_chatID == 0) {
-      int maxID = await _chatRepo.getMaxID();
-      if (maxID != 0) {
-        setState(() {
-          _chatID = maxID + 1;
-        });
-         logger.d('New chat ID generated: $_chatID');
-      }
+    if (_chatID == -1) {
+      //not set then generate... should always be true
+      _chatID = await _chatRepo.updateChatID();
     }
   }
 

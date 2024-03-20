@@ -15,51 +15,45 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
 
   Future<bool> _confirmLeave(BuildContext context) async {
     final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xff202020),
-          title: Text('Exit the chat?',
-            style: GoogleFonts.poppins(
-              color: const Color(0xffD0ad50),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Text(
-            'It will be saved in Previous Chats',
-            style: GoogleFonts.poppins(
-              color: Colors.white,
-            )
-          ),
-          actions: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget> [
-              Flexible(
-                child: TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text('No',
-                    style: GoogleFonts.poppins(
-                      color: Colors.cyan,
-                    )
+        context: context,
+        builder: (context) => AlertDialog(
+                backgroundColor: const Color(0xff202020),
+                title: Text(
+                  'Exit the chat?',
+                  style: GoogleFonts.poppins(
+                    color: const Color(0xffD0ad50),
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-              const SizedBox(width: 20),
-              Flexible(
-                child: TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text('Yes',
+                content: Text('It will be saved in Previous Chats',
                     style: GoogleFonts.poppins(
-                      color: Colors.red,
-                    )
-                  ),
-                ),
-              )
-            ]
-          )
-        ]    
-      )
-    );
+                      color: Colors.white,
+                    )),
+                actions: <Widget>[
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Flexible(
+                          child: TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: Text('No',
+                                style: GoogleFonts.poppins(
+                                  color: Colors.cyan,
+                                )),
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Flexible(
+                          child: TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: Text('Yes',
+                                style: GoogleFonts.poppins(
+                                  color: Colors.red,
+                                )),
+                          ),
+                        )
+                      ])
+                ]));
     return confirmed ?? false;
   }
 
@@ -80,7 +74,7 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
                 'assets/logo_trans.png',
                 height: 30,
               ),
-              const SizedBox (width:8),
+              const SizedBox(width: 8),
               Text(
                 'boileraide',
                 style: GoogleFonts.poppins(
@@ -102,7 +96,7 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
               setState(() {
                 _selectedIndex = index;
               });
-            } 
+            }
           } else {
             setState(() {
               _selectedIndex = index;
@@ -132,8 +126,7 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
           ),
         ],
         selectedItemColor: const Color(0xffD0ad50),
-        unselectedItemColor:
-            const Color.fromARGB(255, 113, 83, 5), //remember to test!!!
+        unselectedItemColor: const Color.fromARGB(255, 113, 83, 5),
       ),
       // ),
     );
