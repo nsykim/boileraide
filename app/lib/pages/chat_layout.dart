@@ -18,16 +18,35 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-          title: const Text('Are you sure you want to leave?'),
-          content: const Text('This new chat will be saved in Previous Chats'),
+        backgroundColor: const Color(0xff202020),
+          title: Text('Exit the chat?',
+            style: GoogleFonts.poppins(
+              color: const Color(0xffD0ad50),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            'It will be saved in Previous Chats',
+            style: GoogleFonts.poppins(
+              color: Colors.white,
+            )
+          ),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('No'),
+              child: Text('No',
+                style: GoogleFonts.poppins(
+                  color: Colors.cyan,
+                )
+              ),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Yes'),
+              child: Text('Yes',
+                style: GoogleFonts.poppins(
+                  color: Colors.red,
+                )
+              ),
             ),
           ]),
     );
@@ -41,6 +60,7 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
     return Scaffold(
       backgroundColor: const Color(0xff202020),
       appBar: AppBar(
+          automaticallyImplyLeading: false,
           centerTitle: true,
           backgroundColor: const Color(0xff202020),
           title: Row(
@@ -50,8 +70,9 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
                 'assets/logo_trans.png',
                 height: 30,
               ),
+              const SizedBox (width:8),
               Text(
-                '    boileraide',
+                'boileraide',
                 style: GoogleFonts.poppins(
                   color: const Color(0xffD0ad50),
                   fontWeight: FontWeight.bold,
