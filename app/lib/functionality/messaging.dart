@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:app/functionality/chat_repo.dart';
 import 'package:app/functionality/messages.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 
 class MessagingWidget extends StatefulWidget {
   final int chatID;
@@ -21,6 +22,7 @@ class MessagingWidget extends StatefulWidget {
 
 class _MessagingWidgetState extends State<MessagingWidget> {
   late final TextEditingController _messageController;
+  bool firstChat = true;
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _MessagingWidgetState extends State<MessagingWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final Logger logger = Logger();
     return Column(
       children: [
         Expanded(
@@ -124,10 +127,11 @@ class _MessagingWidgetState extends State<MessagingWidget> {
                   style: const TextStyle(
                       color: Color.fromARGB(255, 207, 207, 207)),
                   maxLines: null,
-                  decoration: const InputDecoration(
-                    hintText: 'What sounds good?',
-                    hintStyle:
-                        TextStyle(color: Color.fromARGB(255, 207, 207, 207)),
+                  decoration: InputDecoration(
+                    hintText:
+                        firstChat ? 'What sounds good?' : 'Tell me more...',
+                    hintStyle: const TextStyle(
+                        color: Color.fromARGB(255, 207, 207, 207)),
                   ),
                 ),
               ),
@@ -135,16 +139,23 @@ class _MessagingWidgetState extends State<MessagingWidget> {
                 onPressed: () async {
                   String content = _messageController.text.trim();
                   if (content.isNotEmpty) {
-                    Message sent = Message(
-                      chatID: widget.chatID,
-                      content: content,
-                      timestamp: DateTime.now(),
-                      isUser: true,
-                    );
-                    await widget.chatRepo.storeMessage(sent);
-                    setState(() {}); // Trigger rebuild to update UI
-                    _messageController.clear();
-                    _scrollToBottom();
+                    try {
+                      print('Message content: ${_messageController.text}');
+                      Message sent = Message(
+                        chatID: widget.chatID,
+                        content: content,
+                        timestamp: DateTime.now(),
+                        isUser: true,
+                      );
+                      await widget.chatRepo.storeMessage(sent);
+                      setState(() {});
+                      _messageController.clear();
+                      _scrollToBottom();
+                      firstChat = false;
+                    } catch (e) {
+                      logger.e(
+                          "Error storing message: $e"); // Add this line for logging errors
+                    }
                   }
                 },
                 icon: const Icon(
@@ -157,11 +168,5 @@ class _MessagingWidgetState extends State<MessagingWidget> {
         ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    _messageController.dispose();
-    super.dispose();
   }
 }

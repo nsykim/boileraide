@@ -3,6 +3,7 @@ import 'package:sembast/sembast_io.dart'; //used store chat data
 // import 'dart:async';
 import 'package:path_provider/path_provider.dart';
 import 'messages.dart';
+import 'package:logger/logger.dart';
 
 class ChatRepo {
   //late means it will be initalized before it's used.
@@ -12,9 +13,9 @@ class ChatRepo {
   bool _initalized = false;
   ChatRepo._(); //private constructor
   static final ChatRepo _instance = ChatRepo._();
+  Logger logger = Logger();
 
   factory ChatRepo() => _instance; //just makes sure there is only ever one
-
 
   Future<void> initializeDatabase() async {
     //opens or creates if it doesn't already exist
@@ -37,10 +38,7 @@ class ChatRepo {
       chatIDs.add(message.chatID);
       StoreRef<int, Map<String, dynamic>> store =
           intMapStoreFactory.store('chat_$message.chatID');
-      await store.add(
-          db,
-          message
-              .toJson()); //store Json of message in store which is in database db
+      await store.add(db, message.toJson());  //store Json of message in store which is in database db
       return true; //new store is created, first message stored
     } else {
       return false; //store already existed, need to store message
@@ -48,12 +46,23 @@ class ChatRepo {
   }
 
   Future<void> storeMessage(Message message) async {
-    if (!(await createNewStore(message))) {
-      //if false, need to store the message still
+    try {
+      print('Storing message: $message'); // Log the message being stored
       StoreRef<int, Map<String, dynamic>> store =
           intMapStoreFactory.store('chat_${message.chatID}');
       await store.add(db, message.toJson());
-    }
+      print('Message stored successfully'); // Log successful message storage
+    } catch (e) {
+      print('Error storing message: $e'); // Log error storing the message
+      logger.e('Error storing message: $e'); // Log error using logger
+      // rethrow e; // Rethrow the exception to propagate it up the call stack
+    }  
+    // if (!(await createNewStore(message))) {
+    //   //if false, need to store the message still
+    //   StoreRef<int, Map<String, dynamic>> store =
+    //       intMapStoreFactory.store('chat_${message.chatID}');
+    //   await store.add(db, message.toJson());
+    // }
   }
 
   Future<List<Message>> getAllMessages(int chatID) async {
