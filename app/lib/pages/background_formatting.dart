@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:app/functionality/test.dart';
 
 class ChatsPageLayout extends StatefulWidget {
   final Widget body;
@@ -84,7 +85,19 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
               )
             ],
           )),
-      body: widget.body,
+      // body: widget.body,
+
+      //REMOVE THIS WHEN DONE TESTING
+
+      body: Column(
+        children: [
+          Expanded(child: widget.body),
+          const DatabaseManagementWidget(), // Add the widget here
+        ],
+      ),
+
+      //REMOVE THIS WHEN DONE TESTING
+
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color(0xff202020),
         currentIndex: _selectedIndex,

@@ -2,6 +2,7 @@ import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart'; //used store chat data
 import 'package:path_provider/path_provider.dart';
 import 'messages.dart';
+import 'dart:io';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,7 +25,7 @@ class ChatRepo {
       _initalized = true;
 
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('ID', 1); //set ID to 1 at beginning
+      await prefs.setInt('ID', 0); //set ID to 1 at beginning
       //initialize to 1... save 0 to store chatlog names
     }
   }
@@ -38,6 +39,16 @@ class ChatRepo {
       return id;
     }
   }
+
+  Future<void> deleteDatabaseFile() async {
+      final appDocumentDir = await getApplicationDocumentsDirectory();
+      final dbPath = '${appDocumentDir.path}/chat_database.db';
+      final dbFile = File(dbPath);
+      if (await dbFile.exists()) {
+        await dbFile.delete();
+      }
+    }
+
 
   Future<int> updateChatID() async {
     //update shared preferences to save this after app is closed
