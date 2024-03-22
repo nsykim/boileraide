@@ -1,4 +1,4 @@
-import 'package:app/pages/new_chat_page.dart';
+import 'package:app/pages/saved_chats_page.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -53,7 +53,7 @@ class HomePage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const NewChatPage(),
+                      builder: (context) => const SavedChatsPage(),
                     ),
                   );
                 },

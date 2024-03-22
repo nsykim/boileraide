@@ -1,5 +1,10 @@
+import 'package:app/pages/saved_chats_page.dart';
+import 'package:app/pages/new_chat_page.dart';
+import 'package:flutter/material.dart' as flutter;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:app/pages/recipes_page.dart';
 import 'package:app/functionality/test.dart';
 
 class ChatsPageLayout extends StatefulWidget {
@@ -12,7 +17,23 @@ class ChatsPageLayout extends StatefulWidget {
 }
 
 class _ChatsPageLayoutState extends State<ChatsPageLayout> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = 2;
+    _loadSavedIndex(); // Call the method to load the saved index
+  }
+
+  void _loadSavedIndex() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int savedIndex =
+        prefs.getInt('selectedIndex') ?? 2; // Default to 2 if no value is saved
+    setState(() {
+      _selectedIndex = savedIndex;
+    });
+  }
 
   Future<bool> _confirmLeave(BuildContext context) async {
     final confirmed = await showDialog<bool>(
@@ -58,10 +79,48 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
     return confirmed ?? false;
   }
 
+  void _onItemTapped(int index) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print('index: $index selectedIndex: $_selectedIndex');
+    if (index != 0 && _selectedIndex == 0) {
+      bool confirmed = await _confirmLeave(context);
+      if (confirmed) {
+        prefs.setInt('selectedIndex', index);
+        _navigateToIndex(index);
+      }
+    } else {
+      prefs.setInt('selectedIndex', index);
+      _navigateToIndex(index);
+    }
+  }
+
+  void _navigateToIndex(int index) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          switch (index) {
+            case 0:
+              return const NewChatPage();
+            case 1:
+              return const RecipePage();
+            case 2:
+              return const SavedChatsPage();
+            default:
+              // Navigate to some default page or handle other cases
+              return Container();
+          }
+        },
+      ),
+    ).then((_) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // return MaterialApp(
-    // key: key, //get rid of the annoying warning
     return Scaffold(
       backgroundColor: const Color(0xff202020),
       appBar: AppBar(
@@ -89,7 +148,7 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
 
       //REMOVE THIS WHEN DONE TESTING
 
-      body: Column(
+      body: flutter.Column(
         children: [
           Expanded(child: widget.body),
           const DatabaseManagementWidget(), // Add the widget here
@@ -100,48 +159,34 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
 
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color(0xff202020),
+        onTap: _onItemTapped,
         currentIndex: _selectedIndex,
-        onTap: (index) async {
-          if (index != 0 && _selectedIndex == 0) {
-            //if on new chat and trying to go to different page
-            final confirmed = await _confirmLeave(context);
-            if (confirmed) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            }
-          } else {
-            setState(() {
-              _selectedIndex = index;
-            });
-          }
-          // if (index == 1) {
-          //   Navigator.push(context, MaterialPageRoute(builder: (context => RecipesPage()),
-          //   ));
-          // } else if (index == 2) {
-          //   Navigator.push(context, MaterialPageRoute(builder: (context => SavedChats()),
-          //   ));
-        },
+        selectedItemColor: const Color(0xffD0ad50),
+        unselectedItemColor: const Color(0xffD0ad50),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble),
+            icon: Icon(
+              Icons.chat_bubble,
+            ),
+            // color:  Color(0xffD0ad50)),
             label: 'New Chat',
-            // backgroundColor:Color(0xffD0ad50),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
+            icon: Icon(
+              Icons.bookmark,
+            ),
+            // color:  Color(0xffD0ad50)),
             label: 'Saved Recipes',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.timer),
+            icon: Icon(
+              Icons.timer,
+            ),
+            // color:  Color(0xffD0ad50)),
             label: 'Previous Chats',
-            // backgroundColor:Color(0xffD0ad50),
           ),
         ],
-        selectedItemColor: const Color(0xffD0ad50),
-        unselectedItemColor: const Color.fromARGB(255, 113, 83, 5),
       ),
-      // ),
     );
   }
 }

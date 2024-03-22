@@ -19,18 +19,18 @@ class _NewChatPageState extends State<NewChatPage> {
 
   @override
   void initState() {
-    _scrollController = ScrollController();
     super.initState();
-    _chatRepo = ChatRepo();
+
+    _chatRepo = ChatRepo.instance;
     _initializeChatRepo();
+    _scrollController = ScrollController();
     logger.d('NewChatPage initialized. Chat ID: $_chatID');
   }
 
   Future<void> _initializeChatRepo() async {
     try {
       logger.d('Initalizing ChatRepo');
-      _generateNewID();
-      await _chatRepo.initializeDatabase();
+      await _generateNewID();
       logger.d('New ID: $_chatID');
       setState(() {});
       logger.d('Initialized ChatRepo Successfully');
@@ -40,10 +40,8 @@ class _NewChatPageState extends State<NewChatPage> {
   }
 
   Future<void> _generateNewID() async {
-    if (_chatID == -1) {
-      //not set then generate... should always be true
-      _chatID = await _chatRepo.updateChatID();
-    }
+    //not set then generate... should always be true
+    _chatID = await _chatRepo.updateChatID();
   }
 
   @override
