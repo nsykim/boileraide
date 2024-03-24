@@ -8,12 +8,14 @@ class MessagingWidget extends StatefulWidget {
   final int chatID;
   final ChatRepo chatRepo;
   final ScrollController scrollController;
+  final VoidCallback initializeChatRepo;
 
   const MessagingWidget({
     Key? key,
     required this.chatID,
     required this.chatRepo,
     required this.scrollController,
+    required this.initializeChatRepo,
   }) : super(key: key);
 
   @override
@@ -23,6 +25,7 @@ class MessagingWidget extends StatefulWidget {
 class _MessagingWidgetState extends State<MessagingWidget> {
   late final TextEditingController _messageController;
   bool firstChat = true;
+  bool _initialized = false;
 
   @override
   void initState() {
@@ -140,6 +143,10 @@ class _MessagingWidgetState extends State<MessagingWidget> {
                   String content = _messageController.text.trim();
                   if (content.isNotEmpty) {
                     try {
+                      if (!_initialized) {
+                        widget.initializeChatRepo();
+                        _initialized = true;
+                      }
                       // print('ChatID: ${widget.chatID}');
                       // print('Message content: ${_messageController.text}');
                       Message sent = Message(

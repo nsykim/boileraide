@@ -82,15 +82,17 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
   void _onItemTapped(int index) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print('index: $index selectedIndex: $_selectedIndex');
-    if (index != 0 && _selectedIndex == 0) {
-      bool confirmed = await _confirmLeave(context);
-      if (confirmed) {
+    if (index != _selectedIndex) {
+      if (index != 0 && _selectedIndex == 0) {
+        bool confirmed = await _confirmLeave(context);
+        if (confirmed) {
+          prefs.setInt('selectedIndex', index);
+          _navigateToIndex(index);
+        }
+      } else {
         prefs.setInt('selectedIndex', index);
         _navigateToIndex(index);
       }
-    } else {
-      prefs.setInt('selectedIndex', index);
-      _navigateToIndex(index);
     }
   }
 
@@ -168,21 +170,18 @@ class _ChatsPageLayoutState extends State<ChatsPageLayout> {
             icon: Icon(
               Icons.chat_bubble,
             ),
-            // color:  Color(0xffD0ad50)),
             label: 'New Chat',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.bookmark,
             ),
-            // color:  Color(0xffD0ad50)),
             label: 'Saved Recipes',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.timer,
             ),
-            // color:  Color(0xffD0ad50)),
             label: 'Previous Chats',
           ),
         ],

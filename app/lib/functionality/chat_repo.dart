@@ -22,19 +22,19 @@ class ChatRepo {
   static ChatRepo get instance => _instance;
 
   Future<void> initializeDatabase() async {
-    logger.d('initalizing database');
+    // logger.d('initalizing database');
     final appDocumentDir = await getApplicationDocumentsDirectory();
     final dbPath = '${appDocumentDir.path}/chat_database.db';
     db = await databaseFactoryIo.openDatabase(dbPath);
-    logger.d('database initialized. Creating SharedPreferences instance');
+    // logger.d('database initialized. Creating SharedPreferences instance');
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('ID', 0); //set ID to 1 at beginning
-    logger.d('SharedPreferences instance created. Creating store ID 0');
+    // logger.d('SharedPreferences instance created. Creating store ID 0');
     //initialize to 1... save 0 to store chatlog names
     final mainStore = intMapStoreFactory.store('chat_0');
     await mainStore.add(db, {}); //where we will save chat names
-    logger.d('Initalized Database and chat name store');
+    // logger.d('Initalized Database and chat name store');
   }
 
   Future<int> getCurrentID() async {
@@ -113,9 +113,9 @@ class ChatRepo {
       StoreRef<int, Map<String, dynamic>> store =
           intMapStoreFactory.store('chat_${message.chatID}');
       await store.add(db, message.toJson());
-      print('Message stored successfully'); // Log successful message storage
+      // print('Message stored successfully'); // Log successful message storage
     } catch (e) {
-      print('Error storing message: $e'); // Log error storing the message
+      // print('Error storing message: $e'); // Log error storing the message
       logger.e('Error storing message: $e'); // Log error using loggerthe
     }
   }
