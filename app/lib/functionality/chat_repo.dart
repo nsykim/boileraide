@@ -1,158 +1,130 @@
-import 'package:sembast/sembast.dart';
-import 'package:sembast/sembast_io.dart'; //used store chat data
+// import 'package:sembast/sembast.dart';
+// import 'package:sembast/sembast_io.dart'; //used store chat data
+// import 'package:path_provider/path_provider.dart';
+// import 'messages.dart';
+// import 'package:logger/logger.dart';
+// // import 'package:shared_preferences/shared_preferences.dart';
+
+// class ChatRepo {
+//   late final Database db;
+//   // bool _initialized = false;
+//   Logger logger = Logger();
+
+//   ChatRepo._();
+
+//   static final ChatRepo _instance = ChatRepo._();
+//   static ChatRepo get instance => _instance;
+
+//   Future<void> initializeDatabase() async {
+//     // logger.d('initalizing database');
+//     final appDocumentDir = await getApplicationDocumentsDirectory();
+//     final dbPath = '${appDocumentDir.path}/chat_database.db';
+//     db = await databaseFactoryIo.openDatabase(dbPath);
+//     await deleteStore();
+//     await initStore();
+//   }
+
+//   Future<void> deleteStore() async {
+//     final storeFinder = Finder(filter: Filter.byKey('chat'));
+//     final store = intMapStoreFactory.store('chat');
+//     final record = await store.findFirst(db, finder: storeFinder);
+//     if (record != null) {
+//       await store.delete(db);
+//     }
+//   }
+
+//   Future<void> initStore() async {
+//     final storeFinder = Finder(filter: Filter.byKey('chat'));
+//     final store = intMapStoreFactory.store('chat');
+//     final record = await store.findFirst(db, finder: storeFinder);
+//     if (record == null) {
+//       await store.add(db, {});
+//     }
+//   }
+
+//   Future<void> storeMessage(Message message) async {
+//     try {
+//       print('Storing message: $message'); // Log the message being stored
+//       StoreRef<int, Map<String, dynamic>> store =
+//           intMapStoreFactory.store('chat');
+//       await store.add(db, message.toJson());
+//       // print('Message stored successfully'); // Log successful message storage
+//     } catch (e) {
+//       // print('Error storing message: $e'); // Log error storing the message
+//       logger.e('Error storing message: $e'); // Log error using loggerthe
+//     }
+//   }
+
+//   Future<List<Message>> getAllMessages() async {
+//     //createa a store reference that we use to get the message log
+//     final store = intMapStoreFactory.store('chat');
+
+//     final finder = Finder(sortOrders: [SortOrder('timestamp')]);
+//     final snapshot = await store.find(db, finder: finder);
+//     final messages =
+//         snapshot.map((record) => Message.fromJson(record.value)).toList();
+//     return messages;
+//   }
+// }
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:path_provider/path_provider.dart';
 import 'messages.dart';
-import 'dart:io';
-import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatRepo {
-  late final Database db;
-  bool _initialized = false;
-  Logger logger = Logger();
+  late final String _filePath;
+  late final Future<void> _initialization;
 
-  ChatRepo._() {
-    if (!_initialized) {
-      initializeDatabase();
-      _initialized = true;
+  ChatRepo() {
+    _initialization = _initializeFilePath();
+  }
+
+  Future<void> _initializeFilePath() async {
+    try {
+      final appDocumentDir = await getApplicationDocumentsDirectory();
+      _filePath = '${appDocumentDir.path}/chat_logs.json';
+    } catch (e) {
+      print('Error initializing file path: $e');
     }
   }
 
-  static final ChatRepo _instance = ChatRepo._();
-  static ChatRepo get instance => _instance;
-
-  Future<void> initializeDatabase() async {
-    // logger.d('initalizing database');
-    final appDocumentDir = await getApplicationDocumentsDirectory();
-    final dbPath = '${appDocumentDir.path}/chat_database.db';
-    db = await databaseFactoryIo.openDatabase(dbPath);
-    // logger.d('database initialized. Creating SharedPreferences instance');
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('ID', 0); //set ID to 1 at beginning
-    // logger.d('SharedPreferences instance created. Creating store ID 0');
-    //initialize to 1... save 0 to store chatlog names
-    final mainStore = intMapStoreFactory.store('chat_0');
-    await mainStore.add(db, {}); //where we will save chat names
-    // logger.d('Initalized Database and chat name store');
-  }
-
-  Future<int> getCurrentID() async {
-    final prefs = await SharedPreferences.getInstance();
-    final int? id = prefs.getInt('ID');
-    if (id == null) {
-      throw Exception('no ID found!');
-    } else {
-      return id;
-    }
-  }
-
-  Future<void> deleteDatabaseFile() async {
-    final appDocumentDir = await getApplicationDocumentsDirectory();
-    final dbPath = '${appDocumentDir.path}/chat_database.db';
-    final dbFile = File(dbPath);
-    if (await dbFile.exists()) {
-      await dbFile.delete();
-    }
-  }
-
-  Future<bool> noChatLogs() async {
-    // Check if the database file exists
-    final appDocumentDir = await getApplicationDocumentsDirectory();
-    final dbPath = '${appDocumentDir.path}/chat_database.db';
-    final dbFile = File(dbPath);
-    if (!await dbFile.exists()) {
-      //first time opening app. no db file exists
-      logger.d('database doesnt exist');
-      return true;
-    }
-
-    // Loop from 1 to currentID to check if any stores have content
-    final currentID = await getCurrentID();
-    for (int i = 1; i <= currentID; i++) {
-      final store = intMapStoreFactory.store('chat_$i');
-      final snapshot = await store.findFirst(db);
-      if (snapshot != null) {
-        // If store contains content, close the database and return false (chat logs exist)
-        await db.close();
-        return false;
+  Future<void> deleteChatLogs() async {
+    await _initialization;
+    try {
+      final file = File(_filePath);
+      if (await file.exists()) {
+        await file.delete();
       }
-    }
-    return true;
-  }
-
-  Future<int> updateChatID() async {
-    //update shared preferences to save this after app is closed
-    final prefs = await SharedPreferences.getInstance();
-
-    final currentID = prefs.getInt('ID');
-    final newID = currentID! + 1;
-    await prefs.setInt('ID', newID);
-    return newID;
-  }
-
-  Future<void> initStore(int chatID) async {
-    final storeFinder = Finder(filter: Filter.byKey(chatID));
-    final store = intMapStoreFactory.store('chat_$chatID');
-    final record = await store.findFirst(db, finder: storeFinder);
-    if (record != null) {
-      throw Exception('Chat ID is already in use!');
-    } else {
-      final newStore = intMapStoreFactory.store('chat_$chatID');
-      await newStore.add(db, {});
-
-      final mainStore = intMapStoreFactory.store('chat_0');
-      await mainStore
-          .add(db, {'chatID': chatID, 'chatName': 'Unnamed Chat $chatID'});
+    } catch (e) {
+      print('Error deleting chat logs: $e');
     }
   }
 
   Future<void> storeMessage(Message message) async {
+    await _initialization;
     try {
-      print('Storing message: $message'); // Log the message being stored
-      StoreRef<int, Map<String, dynamic>> store =
-          intMapStoreFactory.store('chat_${message.chatID}');
-      await store.add(db, message.toJson());
-      // print('Message stored successfully'); // Log successful message storage
+      final file = File(_filePath);
+      final List<Message> chatLogs = await getAllMessages();
+      chatLogs.add(message);
+      await file.writeAsString(jsonEncode(chatLogs.map((msg) => msg.toJson()).toList()));
     } catch (e) {
-      // print('Error storing message: $e'); // Log error storing the message
-      logger.e('Error storing message: $e'); // Log error using loggerthe
+      print('Error storing message: $e');
     }
   }
 
-  Future<DateTime?> getLastMessageTime(int chatID) async {
-    final store = intMapStoreFactory.store('chat_$chatID');
-    final finder = Finder(sortOrders: [SortOrder('timestamp', false)]);
-    final snapshot = await store.find(db, finder: finder);
-    if (snapshot.isEmpty) {
-      return null; //means deleted. should skip over
-    } else {
-      final timestamp = snapshot.first['timestamp'] as DateTime;
-      return timestamp;
+  Future<List<Message>> getAllMessages() async {
+    await _initialization;
+    try {
+      final file = File(_filePath);
+      if (await file.exists()) {
+        final jsonData = await file.readAsString();
+        final List<dynamic> jsonList = jsonDecode(jsonData);
+        return jsonList.map((json) => Message.fromJson(json)).toList();
+      }
+    } catch (e) {
+      print('Error getting all messages: $e');
     }
-  }
-
-  Future<String?> getChatName(int chatID) async {
-    final mainStore = intMapStoreFactory.store('chat_0'); //open name store
-    final finder = Finder(
-        filter: Filter.equals('chatID', chatID)); //find store with same chatID
-    final recordSnapshots = await mainStore.find(db, finder: finder);
-    if (recordSnapshots.isEmpty) {
-      return null; //means it was deleted... do NOT allow for access
-    } else {
-      final record = recordSnapshots.first;
-      return record['chatName'] as String?;
-    }
-  }
-
-  Future<List<Message>> getAllMessages(int chatID) async {
-    //createa a store reference that we use to get the message log
-    final store = intMapStoreFactory.store('chat_$chatID');
-
-    final finder = Finder(sortOrders: [SortOrder('timestamp')]);
-    final snapshot = await store.find(db, finder: finder);
-    final messages =
-        snapshot.map((record) => Message.fromJson(record.value)).toList();
-    return messages;
+    return [];
   }
 }

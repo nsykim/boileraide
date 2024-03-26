@@ -14,46 +14,23 @@ class NewChatPage extends StatefulWidget {
 class _NewChatPageState extends State<NewChatPage> {
   late final ChatRepo _chatRepo;
   late final ScrollController _scrollController;
-  late int _chatID;
+  // late int _chatID;
   final Logger logger = Logger();
 
   @override
   void initState() {
-    _chatID = -1;
     super.initState();
-    _chatRepo = ChatRepo.instance;
+    _chatRepo = ChatRepo();
     _scrollController = ScrollController();
-    // logger.d('NewChatPage initialized. Chat ID: $_chatID');
   }
 
-  Future<void> _initializeChatRepo() async {
-    if (_chatID == -1) {
-      try {
-        // logger.d('Initalizing ChatRepo');
-        await _generateNewID();
-        logger.d('Initializing new Store with ID: $_chatID');
-        setState(() {});
-        // logger.d('Initialized ChatRepo Successfully');
-      } catch (e) {
-        logger.e('Error initializing the Chat Repository with ID $_chatID: $e');
-      }
-    }
-  }
-
-  Future<void> _generateNewID() async {
-    if (_chatID == -1) {
-      _chatID = await _chatRepo.updateChatID();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return ChatsPageLayout(
       body: MessagingWidget(
         scrollController: _scrollController,
-        chatID: _chatID,
         chatRepo: _chatRepo,
-        initializeChatRepo: _initializeChatRepo,
       ),
     );
   }

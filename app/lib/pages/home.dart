@@ -1,6 +1,6 @@
-import 'package:app/pages/saved_chats_page.dart';
+import 'package:app/pages/new_chat_page.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/widgets.dart';
+import 'package:app/functionality/chat_repo.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatelessWidget {
@@ -18,9 +18,7 @@ class HomePage extends StatelessWidget {
             crossAxisAlignment:
                 CrossAxisAlignment.center, // Center the children horizontally
             children: [
-              Image.asset(
-                'assets/boileraide_logo_lower.png'
-              ),
+              Image.asset('assets/boileraide_logo_lower.png'),
               Text(
                 'Realize Your Culinary Imagination',
                 style: GoogleFonts.poppins(
@@ -41,19 +39,21 @@ class HomePage extends StatelessWidget {
               ),
               ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(const Color(0xffD0ad50)),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(const Color(0xffD0ad50)),
                   shape: MaterialStateProperty.all<OutlinedBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   // Go to chat page
+                  await ChatRepo().deleteChatLogs();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const SavedChatsPage(),
+                      builder: (context) => const NewChatPage(),
                     ),
                   );
                 },

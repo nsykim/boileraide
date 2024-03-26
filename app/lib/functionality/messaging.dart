@@ -5,17 +5,15 @@ import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
 class MessagingWidget extends StatefulWidget {
-  final int chatID;
+  // final int chatID;
   final ChatRepo chatRepo;
   final ScrollController scrollController;
-  final VoidCallback initializeChatRepo;
 
   const MessagingWidget({
     Key? key,
-    required this.chatID,
+    // required this.chatID,
     required this.chatRepo,
     required this.scrollController,
-    required this.initializeChatRepo,
   }) : super(key: key);
 
   @override
@@ -25,7 +23,6 @@ class MessagingWidget extends StatefulWidget {
 class _MessagingWidgetState extends State<MessagingWidget> {
   late final TextEditingController _messageController;
   bool firstChat = true;
-  bool _initialized = false;
 
   @override
   void initState() {
@@ -49,7 +46,7 @@ class _MessagingWidgetState extends State<MessagingWidget> {
       children: [
         Expanded(
           child: FutureBuilder<List<Message>>(
-            future: widget.chatRepo.getAllMessages(widget.chatID),
+            future: widget.chatRepo.getAllMessages(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
@@ -126,6 +123,7 @@ class _MessagingWidgetState extends State<MessagingWidget> {
             children: [
               Expanded(
                 child: TextField(
+                  maxLength: 255,
                   controller: _messageController,
                   style: const TextStyle(
                       color: Color.fromARGB(255, 207, 207, 207)),
@@ -143,23 +141,19 @@ class _MessagingWidgetState extends State<MessagingWidget> {
                   String content = _messageController.text.trim();
                   if (content.isNotEmpty) {
                     try {
-                      if (!_initialized) {
-                        widget.initializeChatRepo();
-                        _initialized = true;
-                      }
                       // print('ChatID: ${widget.chatID}');
                       // print('Message content: ${_messageController.text}');
                       Message sent = Message(
-                        chatID: widget.chatID,
+                        // chatID: widget.chatID,
                         content: content,
                         timestamp: DateTime.now(),
                         isUser: true,
                       );
                       await widget.chatRepo.storeMessage(sent);
-                      setState(() {});
                       _messageController.clear();
                       _scrollToBottom();
                       firstChat = false;
+                      setState(() {});
                     } catch (e) {
                       logger.e(
                           "Error storing message: $e"); // Add this line for logging errors

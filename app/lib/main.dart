@@ -5,6 +5,7 @@ import 'package:app/pages/home.dart';
 
 void main() {
   runApp(const MyApp());
+
 }
 
 //ROOT
