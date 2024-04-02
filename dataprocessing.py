@@ -13,7 +13,8 @@ end_time = time.time()
 elapsed_time = end_time - start_time
 print(f"SUCCESS: {elapsed_time} seconds")
 
-# Load Data into a 
+
+# Load Data into a
 file_path = 'RAW_recipes.csv'  # Replace 'data.csv' with the path to your CSV file
 
 #import the file - + time it
@@ -141,39 +142,28 @@ def add_composite_match_column(df):
     return df
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 #MAIN STUFF
+
 
 
 for column in df.columns:
     print(f"{column}: ", end="")
     print(df[column].apply(type).unique())
 
-tags = {"occasian", "15-minutes-or-less", "superbowl", "60-minutes-or-less"}
-ingredients = {"eggs", "chicken"}
+filtertags = {"occasian", "15-minutes-or-less", "superbowl", "60-minutes-or-less"}
+filteringredients = {"eggs", "chicken"}
 
 filtered_df = filter_by_tags(df, filtertags)
-filtered_df = filter_by_ingredients(filtered_df, ingredients)
+filtered_df = filter_by_ingredients(filtered_df, filteringredients)
 print(len(filtered_df))
 
-add_percent_ingredient_match_column(filtered_df, ingredients)
-add_percent_tag_match_column(filtered_df, tags)
+add_percent_ingredient_match_column(filtered_df, filteringredients)
+add_percent_tag_match_column(filtered_df, filtertags)
 add_composite_match_column(filtered_df)
 
 
-print(head(20))
+print(filtered_df.head(20))
+
 
 
 

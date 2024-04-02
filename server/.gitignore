@@ -1,0 +1,4 @@
+.env*.local
+
+RAW_recipies.csv
+recipies.parquet
