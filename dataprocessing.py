@@ -2,11 +2,11 @@ import time
 
 print("packages import test - ", end="")
 start_time = time.time()
-import numpy as np
+#import numpy as np
 import pandas as pd
 # also make sure to include fast parquet
-import csv
-import openai
+#import csv
+#import openai
 import ast
 from openai import OpenAI
 import re

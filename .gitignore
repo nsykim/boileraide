@@ -1,3 +1,3 @@
 .env*.local
-RAW_recipies.csv
-recipies.parquet
+RAW_recipes.csv
+recipes.parquet
