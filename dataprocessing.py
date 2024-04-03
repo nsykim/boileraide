@@ -31,19 +31,11 @@ end_time = time.time()
 elapsed_time = end_time - start_time
 print(f"SUCCESS: {elapsed_time} seconds")
 
-#save it into a parquet
-print("recipes dataset to parquet - ", end="")
-start_time = time.time()
-df.to_parquet('recipes.parquet')
-df = pd.read_parquet('recipes.parquet')
-end_time = time.time()
-elapsed_time = end_time - start_time
-print(f"SUCCESS: {elapsed_time} seconds")
-
 print("tags processing - ", end="")
 start_time = time.time()
-df['tags'] = df['tags'].apply(ast.literal_eval) # convert the strrings in the thing to a list
-#grab all of the unique tags in the tags column
+df['tags'] = df['tags'].apply(ast.literal_eval)  # Convert the strings in the column to a list
+df['tags'] = df['tags'].apply(lambda x: [tag.replace('-', ' ') for tag in x])  # Replace hyphens with spaces in each tag
+# Grab all of the unique tags in the tags column
 unique_tags = set(tag for tags_list in df['tags'] for tag in tags_list)
 end_time = time.time()
 elapsed_time = end_time - start_time
@@ -62,10 +54,6 @@ df['ingredients'] = df['ingredients'].apply(ast.literal_eval) # convert the strr
 end_time = time.time()
 elapsed_time = end_time - start_time
 print(f"SUCCESS: {elapsed_time} seconds\n")
-
-
-
-
 
 print("num ingredients processing - ", end="")
 start_time = time.time()
@@ -98,10 +86,19 @@ elapsed_time = end_time - start_time
 print(f"SUCCESS: {elapsed_time} seconds")
 print(f"{rowsPre} - {rowsPost} = {rowsPre - rowsPost} rows lost\n")
 
+#save it into a parquet
+print("recipes dataset to parquet - ", end="")
+start_time = time.time()
+df.to_parquet('recipes.parquet')
+df = pd.read_parquet('recipes.parquet')
+end_time = time.time()
+elapsed_time = end_time - start_time
+print(f"SUCCESS: {elapsed_time} seconds")
+
 def complexity_sort(df, ascending = True): #pass in your dataframe and if you want ascending to descrending
     return df.sort_values(by='n_steps', ascending=ascending)
 
-def ingredients_sort(df, ascending = True): #pass in your dataframe and if you want ascending to descrending
+def ingredients_sort(df, ascending = False): #pass in your dataframe and if you want ascending to descrending
     return df.sort_values(by='n_ingredients', ascending=ascending)
 
 def time_sort(df, ascending = True): #pass in your dataframe and if you want ascending to descrending
@@ -123,7 +120,7 @@ def add_percent_ingredient_match_column(df, ingredients):
         intersection = set(ingredients) & set(row['ingredients'])
         if len(ingredients) == 0:
             return 0
-        return (len(intersection) / len(ingredients)) * 100
+        return (len(intersection) / len(ingredients)) 
 
     # Apply the calculate_match function to each row
     df['percent_ingredient_match'] = df.apply(calculate_match, axis=1)
@@ -136,7 +133,7 @@ def add_percent_tag_match_column(df, tags):
         intersection = set(tags) & set(row['tags'])
         if len(tags) == 0:
             return 0
-        return (len(intersection) / len(tags)) * 100
+        return (len(intersection) / len(tags)) 
 
     # Apply the calculate_match function to each row
     df['percent_tag_match'] = df.apply(calculate_match, axis=1)
@@ -144,7 +141,7 @@ def add_percent_tag_match_column(df, tags):
 
 def add_composite_match_column(df):
     # Calculate the composite match as the average of ingredient and tag matches
-    df['composite_match'] = (df['percent_ingredient_match'] + df['percent_tag_match']) / 2
+    df['composite_match'] = (df['percent_ingredient_match'] * df['percent_tag_match']) 
     return df
 
 def create_chat_completion(prompt_messages):
