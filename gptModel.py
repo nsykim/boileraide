@@ -4,27 +4,34 @@ print("packages import test - ", end="")
 start_time = time.time()
 #import numpy as np
 import pandas as pd
-#import ast
+# also make sure to include fast parquet
+#import csv
+#import openai
+import ast
 from openai import OpenAI
 import re
 import os
 from dotenv import load_dotenv, dotenv_values
 
 
+
 end_time = time.time()
 elapsed_time = end_time - start_time
 print(f"SUCCESS: {elapsed_time} seconds")
 
 
-
-
-print("read parquet - ", end="")
+# Load Data into a
+#save it into a parquet
+print("recipes dataset to parquet - ", end="")
 start_time = time.time()
 df = pd.read_parquet('recipes.parquet')
+
+unique_tags = set(tag for tags_list in df['tags'] for tag in tags_list)
+unique_ingredients = set(ingredient for ingredient_list in df['ingredients'] for ingredient in ingredient_list)
+
 end_time = time.time()
 elapsed_time = end_time - start_time
 print(f"SUCCESS: {elapsed_time} seconds")
-
 
 
 
@@ -39,13 +46,15 @@ def ingredients_sort(df, ascending = False): #pass in your dataframe and if you 
 def time_sort(df, ascending = True): #pass in your dataframe and if you want ascending to descrending
     return df.sort_values(by='minutes', ascending=ascending)
 
-def filter_by_tags(df, tags): #pass in tags and tag list
-    mask = df['tags'].apply(lambda x: any(tag in x for tag in tags))
+def filter_by_tags(df, tags, total_tag_list):
+    valid_tags = [tag for tag in tags if tag in total_tag_list]
+    mask = df['tags'].apply(lambda x: any(tag in x for tag in valid_tags))
     filtered_df = df[mask]
     return filtered_df
 
-def filter_by_ingredients(df, ingredients): #pass in tags and tag list
-    mask = df['ingredients'].apply(lambda x: any(ingredient in x for ingredient in ingredients))
+def filter_by_ingredients(df, ingredients, total_ingredient_list):
+    valid_ingredients = [ingredient for ingredient in ingredients if ingredient in total_ingredient_list]
+    mask = df['ingredients'].apply(lambda x: any(ingredient in x for ingredient in valid_ingredients))
     filtered_df = df[mask]
     return filtered_df
 
@@ -57,11 +66,6 @@ def add_percent_ingredient_match_column(df, ingredients):
             return 0
         return (len(intersection) / len(ingredients)) 
 
-    # Apply the calculate_match function to each row
-    df['percent_ingredient_match'] = df.apply(calculate_match, axis=1)
-    return df
-
-
 def add_percent_tag_match_column(df, tags):
     # Define a function to calculate the percent tag match for a single row
     def calculate_match(row):
@@ -70,9 +74,6 @@ def add_percent_tag_match_column(df, tags):
             return 0
         return (len(intersection) / len(tags)) 
 
-    # Apply the calculate_match function to each row
-    df['percent_tag_match'] = df.apply(calculate_match, axis=1)
-    return df
 
 def add_composite_match_column(df):
     # Calculate the composite match as the average of ingredient and tag matches
@@ -134,16 +135,18 @@ def main():
         print(f"{column}: ", end="")
         print(df[column].apply(type).unique())
 
-    filtertags = GPTtags
+#     filtertags = GPTtags
+    filtertags = {"pee", "poop", "amongus"}
     filteringredients = {"eggs", "chicken"}
 
-    filtered_df = filter_by_tags(df, filtertags)
-    filtered_df = filter_by_ingredients(filtered_df, filteringredients)
+    filtered_df = filter_by_tags(df, filtertags, unique_ingredients)
+    filtered_df = filter_by_ingredients(filtered_df, filteringredients, unique_ingredients)
     print(len(filtered_df))
 
-    add_percent_ingredient_match_column(filtered_df, filteringredients)
-    add_percent_tag_match_column(filtered_df, filtertags)
-    add_composite_match_column(filtered_df)
+    if (len(filtered_df) != 0):
+        add_percent_ingredient_match_column(filtered_df, filteringredients)
+        add_percent_tag_match_column(filtered_df, filtertags)
+        add_composite_match_column(filtered_df)
 
     print(filtered_df.head(20))
 
