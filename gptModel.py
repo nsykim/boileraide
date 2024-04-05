@@ -27,6 +27,7 @@ start_time = time.time()
 df = pd.read_parquet('recipes.parquet')
 
 unique_tags = set(tag for tags_list in df['tags'] for tag in tags_list)
+unique_tags_string = ', '.join(unique_tags)
 unique_ingredients = set(ingredient for ingredient_list in df['ingredients'] for ingredient in ingredient_list)
 
 end_time = time.time()
@@ -110,7 +111,7 @@ def extract_tags_from_response(response):
 
 def main():
     prompt_messages = [
-        {"role": "system", "content": "You are a helpful assistant with the design of helping the user come up with tags to search recipies for. Tags should look something like [15 minutes or less], or [occasion]. You should ask the users a few questions until you come up with about five tags, your questions should be clear and concise with only one question at a time"},
+        {"role": "system", "content": "You are a helpful assistant with the design of helping the user come up with a meal that they want to eat, your questions should be clear and concise with only one question at a time. When you finally have a meal to suggest, you will select the tags that make the most sense for it and make sure you have at least 5 tags. Make sure to only suggest the tags and not the actual meal itself. Also make sure to surround the tags in []. The tags you are allowed to chooose from are as follows: " + unique_tags_string},
     ]
 
     print("What type of food are you feeling right now? Type 'quit' to exit.")
@@ -127,7 +128,7 @@ def main():
         print("AI:", response_message)
 
         GPTtags = extract_tags_from_response(response_message)
-        print("Extracted Tags:", GPTtags)
+        #print("Extracted Tags:", GPTtags)
 
         prompt_messages.append({"role": "system", "content": response_message})
 
@@ -135,9 +136,8 @@ def main():
         print(f"{column}: ", end="")
         print(df[column].apply(type).unique())
 
-#     filtertags = GPTtags
-    filtertags = {"pee", "poop", "amongus"}
-    filteringredients = {"eggs", "chicken"}
+    filtertags = GPTtags
+    filteringredients = unique_ingredients
 
     filtered_df = filter_by_tags(df, filtertags, unique_ingredients)
     filtered_df = filter_by_ingredients(filtered_df, filteringredients, unique_ingredients)

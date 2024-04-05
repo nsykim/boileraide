@@ -38,7 +38,7 @@ df['tags'] = df['tags'].apply(ast.literal_eval)  # Convert the strings in the co
 df['tags'] = df['tags'].apply(lambda x: [tag.replace('-', ' ') for tag in x])  # Replace hyphens with spaces in each tag
 # Grab all of the unique tags in the tags column
 unique_tags = set(tag for tags_list in df['tags'] for tag in tags_list)
-print(len(unique_tags))
+print(unique_tags)
 end_time = time.time()
 elapsed_time = end_time - start_time
 print(f"SUCCESS: {elapsed_time} seconds")
