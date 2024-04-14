@@ -111,7 +111,7 @@ def extract_tags_from_response(response):
 
 def main():
     prompt_messages = [
-        {"role": "system", "content": "You are a helpful assistant with the design of helping the user come up with a meal that they want to eat, your questions should be clear and concise with only one question at a time. When you finally have a meal to suggest, you will select the tags that make the most sense for it and make sure you have at least 5 tags. Make sure to only suggest the tags and not the actual meal itself. Also make sure to surround the tags in []. The tags you are allowed to chooose from are as follows: " + unique_tags_string},
+        {"role": "system", "content": "You are a helpful assistant with the design of helping the user come up with tags to search for recipes with, your questions should be clear and concise with only one question at a time. You will ask multiple questions before suggesting tags or a meal. You will select the tags that make the most sense for it and make sure you have at least 5 tags. Make sure to only suggest the tags and not the actual meal itself. Make sure to surround each individual tag with [] when you finally give the answer. The tags you are allowed to chooose from are as follows: " + unique_tags_string},
     ]
 
     print("What type of food are you feeling right now? Type 'quit' to exit.")
@@ -128,7 +128,7 @@ def main():
         print("AI:", response_message)
 
         GPTtags = extract_tags_from_response(response_message)
-        #print("Extracted Tags:", GPTtags)
+        print("Extracted Tags:", GPTtags)
 
         prompt_messages.append({"role": "system", "content": response_message})
 
@@ -139,14 +139,21 @@ def main():
     filtertags = GPTtags
     filteringredients = unique_ingredients
 
+    count = 0
+    for i in GPTtags:
+        if i in unique_tags:
+            count +=1
+    print("unique tags match: ", count)
+
     filtered_df = filter_by_tags(df, filtertags, unique_ingredients)
-    filtered_df = filter_by_ingredients(filtered_df, filteringredients, unique_ingredients)
+    #filtered_df = filter_by_ingredients(filtered_df, filteringredients, unique_ingredients)
     print(len(filtered_df))
 
     if (len(filtered_df) != 0):
-        add_percent_ingredient_match_column(filtered_df, filteringredients)
+        #add_percent_ingredient_match_column(filtered_df, filteringredients)
         add_percent_tag_match_column(filtered_df, filtertags)
-        add_composite_match_column(filtered_df)
+        df.sort_values(by = "percent_ingredient_match", ascending=False)
+        #add_composite_match_column(filtered_df)
 
     print(filtered_df.head(20))
 
