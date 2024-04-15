@@ -132,9 +132,9 @@ def main():
 
         prompt_messages.append({"role": "system", "content": response_message})
 
-    for column in df.columns:
-        print(f"{column}: ", end="")
-        print(df[column].apply(type).unique())
+    # for column in df.columns:
+    #     print(f"{column}: ", end="")
+    #     print(df[column].apply(type).unique())
 
     filtertags = GPTtags
     filteringredients = unique_ingredients
