@@ -1,4 +1,6 @@
 import time
+from datetime import datetime
+import json
 
 print("packages import test - ", end="")
 start_time = time.time()
@@ -106,6 +108,21 @@ def extract_tags_from_response(response):
     tags = set(re.findall(r'\[([^\]]+)\]', response))
     return tags
 
+def response_to_json(response, json_path):
+    #//THIS IS FOR CONNECZTING TO FRONTEND
+    # Get the current timestamp
+    current_timestamp = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    bot_response = {
+        'timestamp': current_timestamp,
+        'content': response,
+        'isUser': False
+    }
+    json_file_path = json_path
+    # Save the bot_response dictionary as a JSON file
+    with open(json_file_path, 'w') as json_file:
+        json.dump(bot_response, json_file, indent=4)
+
+
 #MAIN STUFF
 
 
@@ -115,8 +132,12 @@ def main():
     ]
 
     print("What type of food are you feeling right now? Type 'quit' to exit.")
+    response_to_json("What type of food are you feeling right now? Type 'quit' to exit.", 'bot_response.json')
+
     while True:
         user_input = input("You: ")
+        response_to_json(user_input, 'user_input.json')
+
         if user_input.lower() == 'quit':
             print("Exiting chat...")
             break
@@ -124,6 +145,11 @@ def main():
         prompt_messages.append({"role": "user", "content": user_input})
 
         response_message = create_chat_completion(prompt_messages)
+        response_to_json(response_message, 'bot_response.json')
+        
+
+
+
         # response_content = response_message['content']
         print("AI:", response_message)
 
@@ -155,7 +181,7 @@ def main():
         df.sort_values(by = "percent_ingredient_match", ascending=False)
         #add_composite_match_column(filtered_df)
 
-    print(filtered_df.head(20))
+    print(filtered_df.head())
 
 
 
