@@ -3,10 +3,41 @@ import 'package:app/pages/home.dart';
 // import 'openai_service.dart';
 // import 'package:google_fonts/google_fonts.dart';
 
+//NEW
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+
+
 void main() {
   runApp(const MyApp());
+  //NEW
+  setupFileWatchers();
 
 }
+
+
+Future<void> setupFileWatchers() async {
+  // Retrieve the application's documents directory
+  Directory appDocDir = await getApplicationDocumentsDirectory();
+
+  // Define the paths for bot_response.json and user_input.json within the documents directory
+  var botResponseFile = File('${appDocDir.path}/bot_response.json');
+  var userInputFile = File('${appDocDir.path}/user_input.json');
+
+  // Set up watchers on these files
+  try {
+    botResponseFile.watch(events: FileSystemEvent.modify).listen((event) {
+      print('Bot response file changed');
+    });
+
+    userInputFile.watch(events: FileSystemEvent.modify).listen((event) {
+      print('User input file changed');
+    });
+  } catch (e) {
+    print('Failed to watch files: $e');
+  }
+}
+
 
 //ROOT
 class MyApp extends StatelessWidget {

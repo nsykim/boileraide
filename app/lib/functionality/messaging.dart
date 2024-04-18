@@ -4,6 +4,46 @@ import 'package:app/functionality/messages.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
+
+//NEW
+import 'dart:io';
+import 'dart:convert';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'dart:async';
+
+Future<void> watchFilesAndSendMessages(ChatRepo chatRepo) async{
+  var botResponseFile = File('bot_response.json');
+  var userInputFile = File('user_input.json');
+
+  // Watch the bot response file for modifications
+  botResponseFile.watch(events: FileSystemEvent.modify).listen((event) {
+    sendUpdatedMessage(botResponseFile, chatRepo);
+  });
+
+  // Watch the user input file for modifications
+  userInputFile.watch(events: FileSystemEvent.modify).listen((event) {
+    sendUpdatedMessage(userInputFile, chatRepo);
+  });
+}
+
+Future<void> sendUpdatedMessage(File file, ChatRepo chatRepo) async {
+  try {
+    String content = await file.readAsString();
+    Map<String, dynamic> jsonData = jsonDecode(content);
+    Message message = Message.fromJson(jsonData);
+    await chatRepo.storeMessage(message);
+    // Add any additional code to handle UI updates or state changes
+  } catch (e) {
+    // Handle errors, e.g., log them or send error messages
+    print('Error reading or processing file: $e');
+  }
+}
+//NEW END
+
+
+
+
 class MessagingWidget extends StatefulWidget {
   // final int chatID;
   final ChatRepo chatRepo;
