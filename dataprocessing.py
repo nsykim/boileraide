@@ -88,6 +88,26 @@ elapsed_time = end_time - start_time
 print(f"SUCCESS: {elapsed_time} seconds")
 print(f"{rowsPre} - {rowsPost} = {rowsPre - rowsPost} rows lost\n")
 
+
+# Path to the output text file
+recipes = df['steps']
+
+# Path to the output text file
+output_file = 'recipes_output.txt'
+
+# Writing recipes to the text file
+# Writing recipes to the text file
+with open(output_file, 'w') as file:
+    for i, steps_list in enumerate(recipes):
+        file.write(f"Recipe {i + 1}:\n")  # Optional, add a recipe header
+        for step_number, step in enumerate(steps_list, start=1):
+            file.write(f"Step {step_number}: {step}\n")
+        file.write("\n")  # Adds a newline for separation between recipes
+
+print(f'Recipes have been written to {output_file}')
+
+
+
 #save it into a parquet
 print("recipes dataset to parquet - ", end="")
 start_time = time.time()

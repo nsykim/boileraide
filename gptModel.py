@@ -181,7 +181,8 @@ def main():
         df.sort_values(by = "percent_ingredient_match", ascending=False)
         #add_composite_match_column(filtered_df)
 
-    print(filtered_df.head())
+
+    print(filtered_df['name'].head(20))
 
 
 

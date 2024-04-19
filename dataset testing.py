@@ -86,29 +86,53 @@ print(f"ingredients: {num_ingredient_matches}")
 print(f"tags: {num_tag_matches}")
 
 
-import spacy
-print(unique_ingredients.type())
-print(unique_tags.type())
+print(df.head())
+print(df['name'][20:40])
 
-print("keyword search - ", end="")
-start_time = time.time()
-# Load a large English model
-nlp = spacy.load("en_core_web_sm")
-# Assume a very large list of keywords
-keywords = unique_ingredients  # Large number of items MAKE SURETHIS IS INGREDIENTS
-# Process keywords in advance and store their Lemmas
-keyword_lemmas = set([nlp(keyword)[0].lemma_ for keyword in keywords])
+# Function to print next 20 rows based on user input
+def display_name_rows(df, start=0, step=20):
+    while True:
+        end = start + step
+        print(df['name'][start:end])  # Display the slice of the DataFrame
+        
+        if end >= len(df):
+            print("End of DataFrame.")
+            break
+        
+        user_input = input("Enter 'More?: ")
+        if user_input.lower() != "i want to see more":
+            break
+        
+        start = end
 
-# Search prompt
-search_prompt = "I love chinese food and want to make something that doesn't take too long and make sure it has beef that is stir fried in some way shape or form"
 
-# Process the search prompt
-doc = nlp(search_prompt.lower())
 
-# Find matches using precomputed lemma set
-matches = [token.text for token in doc if token.lemma_ in keyword_lemmas]
 
-print("NLP matched keywords:", matches)
-end_time = time.time()
-elapsed_time = end_time - start_time
-print(f"SUCCESS: {elapsed_time} seconds")
+
+##TESTING FOR NLP KEYWORD SEARCH
+# import spacy
+# print(unique_ingredients.type())
+# print(unique_tags.type())
+
+# print("keyword search - ", end="")
+# start_time = time.time()
+# # Load a large English model
+# nlp = spacy.load("en_core_web_sm")
+# # Assume a very large list of keywords
+# keywords = unique_ingredients  # Large number of items MAKE SURETHIS IS INGREDIENTS
+# # Process keywords in advance and store their Lemmas
+# keyword_lemmas = set([nlp(keyword)[0].lemma_ for keyword in keywords])
+
+# # Search prompt
+# search_prompt = "I love chinese food and want to make something that doesn't take too long and make sure it has beef that is stir fried in some way shape or form"
+
+# # Process the search prompt
+# doc = nlp(search_prompt.lower())
+
+# # Find matches using precomputed lemma set
+# matches = [token.text for token in doc if token.lemma_ in keyword_lemmas]
+
+# print("NLP matched keywords:", matches)
+# end_time = time.time()
+# elapsed_time = end_time - start_time
+# print(f"SUCCESS: {elapsed_time} seconds")
